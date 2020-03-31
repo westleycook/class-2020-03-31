@@ -13,16 +13,18 @@ output: html_document
 # install.packages("gganimate")
 
 # But, once gifski is installed, you don't need to explicitly load it. Loading
-# gganimate, as you see below, is enough.
+# gganimate is enough. But I load it here explicitly, to force everyone to
+# install it.
 
 knitr::opts_chunk$set(echo = TRUE)
 library(infer)
 library(broom)
 library(skimr)
+libraruy(gifski)
 library(gganimate)
 library(tidyverse)
 
-# Thanks for amazing CA Rucha Joshi for preparing this county dataset and for
+# Thanks to amazing CA Rucha Joshi for preparing this county dataset and for
 # writing a draft of this script.
 
 county <- read_rds("county.rds")
