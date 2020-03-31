@@ -122,8 +122,7 @@ Here is an example: https://rpubs.com/ruchajoshi/regional_poverty
 county %>% 
   ggplot(aes(less_than_hs, poverty, color = region)) +
   geom_point() +
-  transition_states(region, wrap = FALSE) +
-  shadow_mark()
+  transition_states(region, wrap = FALSE)
   
 
 ```
