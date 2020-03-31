@@ -1,0 +1,136 @@
+---
+title: 'Chapter 11: Univariate Regression'
+output: html_document
+---
+
+```{r setup, include=FALSE}
+# We have not used gganimate before. So, we need to install it. But gganimate
+# also requires that you have a way to "render" the animation. There are a
+# variety of packages for doing that, we recommend gifski. So, if you have not
+# yet done so, you should install them both.
+
+# install.packages("gifski")
+# install.packages("gganimate")
+
+# But, once gifski is installed, you don't need to explicitly load it. Loading
+# gganimate, as you see below, is enough.
+
+knitr::opts_chunk$set(echo = TRUE)
+library(infer)
+library(broom)
+library(skimr)
+library(gganimate)
+library(tidyverse)
+
+# Thanks for amazing CA Rucha Joshi for preparing this county dataset and for
+# writing a draft of this script.
+
+county <- read_rds("county.rds")
+```
+
+
+# Class One Start
+
+### Scene 1
+
+**Prompt:** Explore the county level data from [here](https://www.ers.usda.gov/data-products/county-level-data-sets/download-data/) with your partner and try to figure out what the variables mean. Can you find any "interesting" observations? Which variables are worth looking at? `poverty` is the percentage of the county living in poverty is 2018. `less_than_hs` is the percentage of the county without at least a high school diploma. `hs` is the percent of the county who have a high school degree, but no further education. Useful functions include `print()`, `glimpse()`, `head()`, `tail()`, `summary()` and `skim()`. 
+
+We are interested in understanding how poverty is correlated with (and influenced by?) education.
+
+
+# Scene 2
+
+**Prompt** Let’s start by exploring our numerical outcome variable `poverty` and our numerical explanatory variable `less_than_hs`. What is the average poverty rate in the US? How does this compare with that of your county (if you are not from US look up Middlesex County - the county that Cambridge, MA is in)? Furthermore, what is the average percentage of adults without a high school diploma? Which state's county has the highest percentage of adults without a high school diploma?
+
+
+# Scene 3
+
+**Prompt:** What is the correlation coefficient of `poverty` and `less_than_hs`? What does it mean? What does it suggest about the relation between the percent of the population in poverty in 2018 and the percent of the population with less than a high school degree in 2014? 
+
+
+# Scene 4
+
+**Prompt:** Use a scatterplot to visualize this data, including a straight line of best fit. The dependent variable is `poverty`. The independent variable is `less_than_hs`.
+
+
+# Scene 5
+
+**Prompt** Create an animation of the scatterplot above with the percent of adults with less than a high school diploma on the x axis and the poverty rate in the y axis. This scatterplot should transition through the four US regions. Hint: Read the [Animation appendix](https://davidkane9.github.io/PPBDS/C-animation.html) of the *[Primer](https://davidkane9.github.io/PPBDS/)*. You need to do two things. First, make the points a different color for each region. Second, add one **gganimate** command to the basic static `ggplot()` call.
+
+Here is an example: https://rpubs.com/ruchajoshi/regional_poverty
+
+
+# Scene 6
+
+**Prompt:** Assume that we are trying to understand the causes of poverty in US counties. Chapter 11 discusses two types of approaches: modeling for explanation and modeling for prediction. (Recall the definitions of these terms.) Which kind is this? Write down some bullet points which make the case for one or the other. 
+
+
+# Scene 7
+
+**Prompt:** Assume we want to create an explanatory model. Create a new variable, `good_education`, which is 1 if `less_than_hs` is less than 13 and 0 if it is not. In other words, we are defining counties with fewer residents who have less than a high school education as having a `good_education`. Counties with more do not have a `good_education`. (13% is about the average across the US.)  
+
+First, what is the average poverty in the `good_education` = 1 counties versus `good_education` = 0 counties?
+
+Second, does this suggest that `good_education` is associated with less poverty? If a new county had `good_education` what would you guess its povery rate is?
+
+Third, does this suggest that `good_education` causes less poverty? If you change education in a county, will poverty change?
+
+Fourth, recall the Rubin Causal Model and potential outcomes. Write down the units, the treatments, and the outcomes. Define the causal effect of `good_education` on poverty rate. What is the fundamental problem of causal inference?
+
+Fifth, how do the above answers change if, instead of using `good_education`, we use `less_than_hs` instead?
+
+
+# Scene 8
+
+**Prompt** Using the `lm()` function, fit a model with this data in which `poverty` is the dependent variable and `less_than_hs` is the independent variable. Save the resulting object as `poverty_model`. Then, use the tidy() function found in section 11.1.2 to obtain the regression parameters. You should have a 2x7 regression table with terms of (Intercept) and `less_than_hs`, as well as an estimate, std.error, statistic, p.value, conf.low, and conf.high. Write one sentence explaining what the intercept means and one sentence about what the slope means.
+
+
+# Scene 9
+
+**Prompt** Use nest() to create a 1,000 bootstrap samples of the the data, just as we did when estimating confidence intervals. In each row of this tibble, we'll have a resampled collection of counties in which we’ll sometimes have multiple counties represented and sometimes there will be counties that don't even appear.
+
+# Scene 10 
+
+**Prompt**  Now, using the starter code above, go ahead and add more columns. Make one called `mod` which will contains the model objects created by `lm()`. Then, add one called `reg_results` which will tidy the objects created by `lm()`, and then one called `disp_coef` which will display the regression coefficient for each bootstrap sample. 
+
+
+# Scene 11 
+
+**Prompt** Create a confidence interval of the slope of our linear regression. What is the value at the 50th percentile? Is that expected? Provide a Bayesian and Frequentist interpretation of this interval.
+
+
+# Scene 12 
+
+**Prompt** Now, let's use a shortcut. Use the confidence intervals reported by `lm()` and `tidy()`.
+
+
+# Scene 13
+
+**Prompt** Alas, our data is missing Travis County in Texas. Suppose Travis County has 10.9% of adults with less than a high school degree. What do you think its poverty rate would be? Why? 
+
+# Scene 14
+
+**Prompt** Suppose I tell you now that Travis County has a 12% poverty rate. By how much was your estimate off? Why?
+
+# Scene 15
+
+**Prompt** Now, compute the fitted and residual values for each county. Explain what the following columns mean in one sentence each: poverty, pct_less_hs, .fitted, .resid. What does it mean to have a positive residual?
+
+# Scene 16
+
+**Prompt** Find the largest positive residual and largest negative residual. Why do you think there is such a large discrepancy?
+
+
+
+
+# Challenge Problems
+
+# Scene 1
+
+**Prompt** Find the standard error of the fitted values, and then construct a confidence interval. Remember, a 95% confidence interval can be found by adding/subtracting 1.96 * SE to the mean. Why is the uncertainty for particular predictions higher than the uncertainty for our estimate of the coefficient on less_than_hs?
+
+
+# Scene 2
+
+**Prompt** Take a look at the babynames library. Create this animation: https://rpubs.com/ruchajoshi/bennetts
+
